@@ -19,7 +19,7 @@ import json
 app = Flask(__name__)
 
 # const_bucket_name = "cloud-computing-termproject-boon"
-const_bucket_name = "boon-ash-5409"
+const_bucket_name = "boon-termproj-5409-databucket"
 aws_region = 'us-east-1'
 
 
@@ -163,7 +163,7 @@ def result():
 def generate_cheat_sheet(lecture_text):
     secretName = "OpenAISecret"
 
-    secrets_manager = boto3.client('secretsmanager')
+    secrets_manager = boto3.client('secretsmanager', region_name=aws_region)
     response = secrets_manager.get_secret_value(SecretId=secretName)
     
     secret_dict = json.loads(response['SecretString'])
