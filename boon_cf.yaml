@@ -1,0 +1,137 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: '5409 Term project in CloudFormation'
+
+Resources:
+
+  StudentsListTopic:
+    Type: 'AWS::SNS::Topic'
+    Properties:
+      DisplayName: 'students_list'
+
+  PDFStoreBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: boon-ash-5409
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        IgnorePublicAcls: false
+        BlockPublicPolicy: false
+        RestrictPublicBuckets: false
+
+  PDFStoreBucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref PDFStoreBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Sub 'arn:aws:s3:::${PDFStoreBucket}/*'
+
+  SendRevisionReminder:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Handler: 'index.handler'
+      Role: arn:aws:iam::489506186058:role/LabRole
+      FunctionName: 'send_revision_reminder'
+      Runtime: 'python3.8'
+      MemorySize: 256
+      Timeout: 10
+      Code:
+        ZipFile: |
+        
+          import json
+          import boto3
+          import os
+
+          def lambda_handler(event, context):
+            topic_arn = os.environ.get('topic_arn')
+            client = boto3.client("sns")
+    
+            email_address = event["email"]
+    
+            subscribe_response = client.subscribe(TopicArn=topic_arn, Protocol='email', Endpoint=email_address)
+    
+            print(subscribe_response)
+
+            message = "It's time to study! Revise your notes now."
+            subject = "Practice makes perfect"
+
+            result = client.publish(TopicArn=topic_arn, Message=message, Subject=subject)
+    
+            print(result)
+
+            return {
+              'statusCode': 200,
+              'body': json.dumps('Subscription done for user' + email_address)
+            }
+
+      Environment:
+        Variables:
+          topic_arn: !Ref StudentsListTopic
+
+  StudyEventBridgeRule:
+    Type: 'AWS::Events::Rule'
+    Properties:
+      Name: 'DailyScheduledRule'
+      Description: 'Trigger every day at 12:00 PM'
+      ScheduleExpression: 'cron(0 12 * * ? *)'  # Cron expression for 12:00 PM every day
+      State: 'ENABLED'
+      EventPattern:
+        source:
+          - 'aws.events'
+        detail-type:
+          - 'Scheduled Event'
+      Targets:
+        - Arn: !GetAtt SendRevisionReminder.Arn
+          Id: 'SendRevisionReminder'
+  
+  FlaskAppSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow inbound SSH and HTTP traffic
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0   # Allow SSH from anywhere
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0   # Allow HTTP from anywhere
+        - IpProtocol: tcp
+          FromPort: 5000
+          ToPort: 5000
+          CidrIp: 0.0.0.0/0
+
+
+  RevisionApp:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: 't2.micro'
+      SecurityGroupIds:
+        - !Ref FlaskAppSG
+      ImageId: 'ami-0230bd60aa48260c6'
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          sudo yum update -y
+          sudo yum install -y git
+          sudo yum install -y python3-pip
+          python3 -m pip install --upgrade pip
+          sudo mkdir boon
+          cd boon
+          sudo git clone https://github.com/legendofskidmark/cc_term.git
+          cd cc_term
+          python3 -m venv venv 
+          source venv/bin/activate
+          sudo pip install -r requirements.txt
+          sudo pip install PyMuPDF
+          sudo FLASK_APP=app.py FLASK_RUN_PORT=5000 FLASK_RUN_HOST=0.0.0.0 flask run &
+
+Outputs:
+  WebsiteURL:
+    Description: 'URL of the Flask web app'
+    Value: !Sub 'http://${RevisionApp.PublicDnsName}:5000'
