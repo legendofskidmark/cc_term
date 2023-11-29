@@ -17,7 +17,8 @@ from openai import OpenAI
 
 app = Flask(__name__)
 
-const_bucket_name = "cloud-computing-termproject-boon"
+# const_bucket_name = "cloud-computing-termproject-boon"
+const_bucket_name = "boon-ash-5409"
 aws_region = 'us-east-1'
 
 
@@ -140,18 +141,15 @@ def result():
     output = request.form.to_dict()
     print(output)
     email = output["email"]
-    time = output["time"]
 
     print(email)
-    print(time)
 
     payload = {
-        "email": email,
-        "time": time
+        "email": email
     }
 
     call_scheduler_lambda(payload)
-    return render_template('output.html', email = email, url1 = url1, url2 = url2, time = time)
+    return render_template('output.html', email = email, url1 = url1, url2 = url2)
     
 def generate_cheat_sheet(lecture_text):
 
