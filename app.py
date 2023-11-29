@@ -154,7 +154,9 @@ def result():
         "email": email
     }
 
-    call_scheduler_lambda(payload)
+    payload_json = json.dumps(payload)
+
+    call_scheduler_lambda(payload_json)
     return render_template('output.html', email = email, url1 = url1, url2 = url2)
     
 def generate_cheat_sheet(lecture_text):
