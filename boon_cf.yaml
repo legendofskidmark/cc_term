@@ -3,6 +3,13 @@ Description: '5409 Term project in CloudFormation'
 
 Resources:
 
+  OpenAISecret:
+    Type: 'AWS::SecretsManager::Secret'
+    Properties:
+      Name: 'OpenAISecret'
+      Description: 'Open AI API key'
+      SecretString: '{"open_ai": "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"}'
+
   StudentsListTopic:
     Type: 'AWS::SNS::Topic'
     Properties:
@@ -11,7 +18,12 @@ Resources:
   PDFStoreBucket:
     Type: 'AWS::S3::Bucket'
     Properties:
-      BucketName: boon-ash-5409
+      BucketName: boon-termproj-5409-databucket
+      LifecycleConfiguration:
+        Rules:
+          - Id: ExpireOldObjects
+            Status: Enabled
+            ExpirationInDays: 1
       PublicAccessBlockConfiguration:
         BlockPublicAcls: false
         IgnorePublicAcls: false
@@ -29,16 +41,6 @@ Resources:
             Principal: '*'
             Action: 's3:GetObject'
             Resource: !Sub 'arn:aws:s3:::${PDFStoreBucket}/*'
-
-  BucketLifecycle:
-    Type: 'AWS::S3::BucketLifecycleConfiguration'
-    DependsOn: PDFStoreBucket
-    Properties:
-      Bucket: !Ref PDFStoreBucket
-      Rules:
-        - Id: DeleteAfterOneDay
-          Status: Enabled
-          ExpirationInDays: 1
 
   SendRevisionReminder:
     Type: 'AWS::Lambda::Function'
@@ -125,7 +127,7 @@ Resources:
       SecurityGroupIds:
         - !Ref FlaskAppSG
       ImageId: 'ami-0230bd60aa48260c6'
-      IamInstanceProfile: arn:aws:iam::489506186058:instance-profile/LabInstanceProfile
+      IamInstanceProfile: LabInstanceProfile
       UserData:
         Fn::Base64: |
           #!/bin/bash
