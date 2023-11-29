@@ -125,13 +125,19 @@ def upload_s3():
 
     create_docx(cleaned_string)
 
+    
+    current_epoch_time = int(time.time())
+    
+    cheat_sheet_file_name = f"cheat_sheet{current_epoch_time}.docx"
+    reWise_file_name = f"reWise{current_epoch_time}.pdf"
+
     # upload to S3
-    s3_client.upload_file("cheat_sheet.docx", const_bucket_name, "cheat_sheet.docx")
+    s3_client.upload_file("cheat_sheet.docx", const_bucket_name, cheat_sheet_file_name)
 
-    s3_client.upload_file("reWise.pdf", const_bucket_name, "reWise.pdf")
+    s3_client.upload_file("reWise.pdf", const_bucket_name, reWise_file_name)
 
-    url2 = "https://cloud-computing-termproject-boon.s3.amazonaws.com/cheat_sheet.docx"
-    url1 = "https://cloud-computing-termproject-boon.s3.amazonaws.com/reWise.pdf"
+    url2 = "https://cloud-computing-termproject-boon.s3.amazonaws.com/" + cheat_sheet_file_name
+    url1 = "https://cloud-computing-termproject-boon.s3.amazonaws.com/" + reWise_file_name
 
     return render_template('output.html', url1 = url1, url2 = url2)
 
