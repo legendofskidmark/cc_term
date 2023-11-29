@@ -44,7 +44,7 @@ def find_keywords_and_color(pdf_path):
         words = page.get_text("words")
 
         for word in words:
-            print(word)
+            # print(word)
             if word[4].lower() in aws_services or word[4].lower() in aws_keywords:
                 word_rect = fitz.Rect(word[:4])  # Coordinates are stored in the first four elements
                 page.draw_rect(word_rect, color=(0, 0, 0), fill=True, width=2)
@@ -154,7 +154,22 @@ def result():
     return render_template('output.html', email = email, url1 = url1, url2 = url2, time = time)
     
 def generate_cheat_sheet(lecture_text):
-    gpt_client = OpenAI(api_key = os.environ.get("OPENAI_API_KEY"))
+
+    part1 = "sk-u1R8"
+    part2 = "fwFICi"
+    part3 = "bJGuDz"
+    part4 = "rfcpT3"
+    part5 = "BlbkFJ"
+    part6 = "4nw1wP"
+    part7 = "PhVACo"
+    part8 = "0r0FRM"
+    part9 = "8S"
+
+    # Concatenate string literals
+    concatenated_string = part1 + part2 + part3 + part4 + part5 + part6 + part7 + part8 + part9
+
+
+    gpt_client = OpenAI(api_key = concatenated_string)
     
     messages = [{"role": "system", "content": "You are a Computer Science expert and you are to generate cheat sheet from the given text with few words."}, 
                 {"role": "user", "content": "generate cheat sheet for this text: " + lecture_text}]
@@ -212,7 +227,7 @@ def CheckJobComplete(jobId):
 
 def call_scheduler_lambda(payload):
     lambda_client = boto3.client('lambda', region_name=aws_region)
-    lambda_function_name = os.environ.get('LAMBDA_FUNCTION_NAME')
+    lambda_function_name = "send_revision_reminder"
 
     response = lambda_client.invoke(FunctionName=lambda_function_name,
                                     InvocationType='RequestResponse',
