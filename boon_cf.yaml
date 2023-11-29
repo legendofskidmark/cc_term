@@ -30,6 +30,16 @@ Resources:
             Action: 's3:GetObject'
             Resource: !Sub 'arn:aws:s3:::${PDFStoreBucket}/*'
 
+  BucketLifecycle:
+    Type: 'AWS::S3::BucketLifecycleConfiguration'
+    DependsOn: PDFStoreBucket
+    Properties:
+      Bucket: !Ref PDFStoreBucket
+      Rules:
+        - Id: DeleteAfterOneDay
+          Status: Enabled
+          ExpirationInDays: 1
+
   SendRevisionReminder:
     Type: 'AWS::Lambda::Function'
     Properties:
@@ -41,26 +51,28 @@ Resources:
       Timeout: 10
       Code:
         ZipFile: |
-        
           import json
           import boto3
           import os
 
-          def lambda_handler(event, context):
+          def handler(event, context):
+            print(event)
+            
             topic_arn = os.environ.get('topic_arn')
             client = boto3.client("sns")
-    
+          
+            
             email_address = event["email"]
-    
+
             subscribe_response = client.subscribe(TopicArn=topic_arn, Protocol='email', Endpoint=email_address)
-    
+
             print(subscribe_response)
 
             message = "It's time to study! Revise your notes now."
             subject = "Practice makes perfect"
 
             result = client.publish(TopicArn=topic_arn, Message=message, Subject=subject)
-    
+
             print(result)
 
             return {
@@ -106,7 +118,6 @@ Resources:
           ToPort: 5000
           CidrIp: 0.0.0.0/0
 
-
   RevisionApp:
     Type: 'AWS::EC2::Instance'
     Properties:
@@ -114,6 +125,7 @@ Resources:
       SecurityGroupIds:
         - !Ref FlaskAppSG
       ImageId: 'ami-0230bd60aa48260c6'
+      IamInstanceProfile: arn:aws:iam::489506186058:instance-profile/LabInstanceProfile
       UserData:
         Fn::Base64: |
           #!/bin/bash
