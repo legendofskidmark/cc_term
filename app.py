@@ -161,22 +161,16 @@ def result():
     return render_template('output.html', email = email, url1 = url1, url2 = url2)
     
 def generate_cheat_sheet(lecture_text):
+    secretName = "OpenAISecret"
 
-    part1 = "sk-u1R8"
-    part2 = "fwFICi"
-    part3 = "bJGuDz"
-    part4 = "rfcpT3"
-    part5 = "BlbkFJ"
-    part6 = "4nw1wP"
-    part7 = "PhVACo"
-    part8 = "0r0FRM"
-    part9 = "8S"
+    secrets_manager = boto3.client('secretsmanager')
+    response = secrets_manager.get_secret_value(SecretId=secretName)
+    
+    secret_dict = json.loads(response['SecretString'])
 
-    # Concatenate string literals
-    concatenated_string = part1 + part2 + part3 + part4 + part5 + part6 + part7 + part8 + part9
+    api_key = secret_dict['open_ai']
 
-
-    gpt_client = OpenAI(api_key = concatenated_string)
+    gpt_client = OpenAI(api_key = api_key)
     
     messages = [{"role": "system", "content": "You are a Computer Science expert and you are to generate cheat sheet from the given text with few words."}, 
                 {"role": "user", "content": "generate cheat sheet for this text: " + lecture_text}]
