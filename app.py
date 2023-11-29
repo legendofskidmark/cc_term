@@ -137,8 +137,8 @@ def upload_s3():
 
     s3_client.upload_file("reWise.pdf", const_bucket_name, reWise_file_name)
 
-    url2 = "https://cloud-computing-termproject-boon.s3.amazonaws.com/" + cheat_sheet_file_name
-    url1 = "https://cloud-computing-termproject-boon.s3.amazonaws.com/" + reWise_file_name
+    url2 = "https://" + const_bucket_name + ".s3.amazonaws.com/" + cheat_sheet_file_name
+    url1 = "https://" + const_bucket_name + ".s3.amazonaws.com/" + reWise_file_name
 
     return render_template('output.html', url1 = url1, url2 = url2)
 
