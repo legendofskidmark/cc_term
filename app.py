@@ -35,6 +35,10 @@ url2 = ""
 def hello():
     return render_template('old_index.html')
 
+@app.route("/health")
+def health():
+    return "OK"
+    
 def find_keywords_and_color(pdf_path):
     
     output_path = "reWise.pdf"
