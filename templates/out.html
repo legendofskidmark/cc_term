@@ -4,107 +4,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All the Best</title>
+    <title>File Upload Confirmation</title>
+    <!-- Bootstrap CSS link (optional) -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            margin: 20px;
-            padding: 20px;
-            background-color: #f8f8f8;
-            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            margin-top: 50px;
             text-align: center;
         }
 
-        h1 {
-            color: #007bff;
-            margin-bottom: 20px;
-        }
-
-        p {
-            font-size: 18px;
-            margin-bottom: 20px;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        li {
-            margin-bottom: 10px;
-        }
-
-        a {
-            color: #28a745;
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
-        }
-
-        label {
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-
-        input {
-            margin-bottom: 15px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
-        h3 {
-            color: blue;
-            margin-top: 10px;
-        }
-
-        .submit {
-            background-color: #007bff;
-            color: #fff;
-            padding: 10px 20px;
+        .card {
             border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .submit:hover {
-            background-color: #0056b3;
+        .card-body {
+            padding: 20px;
+        }
+
+        .success-message {
+            font-size: 24px;
+            color: #28a745;
+        }
+
+        .email-info {
+            font-size: 18px;
+            margin-top: 20px;
         }
     </style>
 </head>
 
 <body>
-    <h1>Download Your Files</h1>
-    <p>Click on the links below to download the files:</p>
 
-    <ul>
-        <li><a href="{{url1}}" download>Download the Revision Lecture Slides</a></li>
-        <li><a href="{{url2}}" download>Download the Cheat Sheet</a></li>
-    </ul>
+    <div class="container">
+        <div class="card mx-auto" style="max-width: 400px;">
+            <div class="card-body">
+                <p class="success-message">Your files have been successfully uploaded!</p>
+                <p class="email-info">A file will be sent to your email soon.</p>
+            </div>
+        </div>
+    </div>
 
-    <form action="/subscribe" method="POST">
-        <label for="email">Enter your email for a revision reminder everyday:</label>
-        <input type="text" id="email" name="email" required>
-
-        <input class="submit" type="submit" value = "Send me a reminder"></input>
-
-        {% if email %}
-        <h3>A reminder will be sent to you on {{email}}</h3>
-        {% endif %}
-
-    </form>
+    <!-- Bootstrap JS and Popper.js scripts (optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 </html>

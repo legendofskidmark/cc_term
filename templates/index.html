@@ -14,7 +14,7 @@
 
         .container {
             margin-top: 50px;
-            text-align: center; /* Center text within the container */
+            text-align: center;
         }
 
         .card {
@@ -29,10 +29,6 @@
 
         .file-input {
             display: none;
-        }
-
-        #file-list {
-            margin-top: 20px;
         }
     </style>
 </head>
@@ -51,16 +47,17 @@
             <div class="card-body">
                 <form action="/generate" method="post" enctype="multipart/form-data">
                     <p class="card-text">Choose a file to reWise and generate a Cheat sheet</p>
-                    <label for="file" class="btn btn-primary btn-block">
+                    <label for="files" class="btn btn-primary btn-block">
                         <input type="file" name="files[]" id="files" multiple="true" onchange="updateFileList()" required>
                     </label>
+                    <hr>
+                    <label for="email">We will send the processed document to your email:</label>
+                    <input type="text" id="email" name="email" required>
                     <hr>
                     <input type="submit" name="upload" value="Upload" class="btn btn-success btn-block">
                 </form>
             </div>
         </div>
-
-        <div id="file-list" class="container">{{msg}}</div>
 
     </div>
 
