@@ -33,7 +33,7 @@ url2 = ""
 
 @app.route("/")
 def hello():
-    return render_template('index.html')
+    return render_template('old_index.html')
 
 def find_keywords_and_color(pdf_path):
     
@@ -140,7 +140,7 @@ def upload_s3():
     url2 = "https://" + const_bucket_name + ".s3.amazonaws.com/" + cheat_sheet_file_name
     url1 = "https://" + const_bucket_name + ".s3.amazonaws.com/" + reWise_file_name
 
-    return render_template('output.html', url1 = url1, url2 = url2)
+    return render_template('old_output.html', url1 = url1, url2 = url2)
 
 
 @app.route('/subscribe',methods=['POST'])
