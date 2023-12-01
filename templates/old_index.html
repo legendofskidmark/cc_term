@@ -49,10 +49,12 @@
                     <p class="card-text">Choose a file to reWise and generate a Cheat sheet</p>
                     <label for="file" class="btn btn-primary btn-block">
                         Browse
-                        <input type="file" name="file" id="file" class="file-input">
+                        <input type="file" name="file" id="file" class="file-input" onchange="updateFileList()" required>
                     </label>
                     <hr>
                     <input type="submit" name="upload" value="Upload" class="btn btn-success btn-block">
+                    <p id="selectedFileName"></p>
+
                 </form>
             </div>
         </div>
@@ -62,6 +64,24 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function updateFileList() {
+            var input = document.getElementById('file');
+            if (input.files.length > 0) {
+                // Get the selected file name
+                const fileName = input.files[0].name;
+                const selectedFileNameElement = document.getElementById('selectedFileName');
+
+                selectedFileNameElement.textContent = 'Selected File: ' + fileName;
+
+                // Log or use the file name as needed
+                console.log('Selected File:', fileName);
+            } else {
+                selectedFileNameElement.textContent = 'No file selected';
+            }
+        }
+    </script>
+
 </body>
 
 </html>
