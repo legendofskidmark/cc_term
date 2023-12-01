@@ -162,7 +162,7 @@ def result():
     payload_json = json.dumps(payload)
 
     call_scheduler_lambda(payload_json)
-    return render_template('output.html', email = email, url1 = url1, url2 = url2)
+    return render_template('old_output.html', email = email, url1 = url1, url2 = url2)
     
 def generate_cheat_sheet(lecture_text):
     secretName = "OpenAISecret"
